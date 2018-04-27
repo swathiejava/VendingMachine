@@ -97,11 +97,7 @@ public class VendingMachine {
 		
 		if(insertedAmount >= amountRequired){
 			this.balance = insertedAmount - amountRequired;
-			List<Price> changesList = collectChange(balance);
-			for(Price p : changesList){
-				int count = cashInMachine.get(p); 
-				cashInMachine.put(p, count - 1);
-			}
+			collectChange(balance);
 			int count = stock.get(selectedProduct);
 			stock.put(selectedProduct, count - 1);
 			System.out.println("Please take your change " + balance +" cents");
@@ -117,26 +113,29 @@ public class VendingMachine {
  * 
  */
 	
-	public List<Price> collectChange(int balance){
-		List<Price> changes = Collections.emptyList();
+	public void collectChange(int balance){
 		
 		if(balance > 0) {
-			changes = new ArrayList<Price>();
-			long avialableBalance = balance;
-			while(avialableBalance > 0){ 
-				  if(avialableBalance >= Price.QUARTER.getValue()&& cashInMachine.containsKey(Price.QUARTER))
+			while(balance > 0){ 
+				  if(balance/Price.QUARTER.getValue()> 0&& cashInMachine.containsKey(Price.QUARTER))
 				  { 
-					  changes.add(Price.QUARTER); 
-					  avialableBalance = avialableBalance - Price.QUARTER.getValue(); 
+					  balance = balance - Price.QUARTER.getValue(); 
+					  int count = cashInMachine.get(Price.QUARTER);
+					  System.out.println("Coin Dispensed " + Price.QUARTER.getValue() );
+					  cashInMachine.put(Price.QUARTER, count - 1);
 					  continue; 
-					}else if(balance >= Price.DIME.getValue() && cashInMachine.containsKey(Price.DIME)) 
+					}else if(balance/Price.DIME.getValue()>0 && cashInMachine.containsKey(Price.DIME)) 
 					{ 
-						changes.add(Price.DIME); 
-						avialableBalance = avialableBalance - Price.DIME.getValue(); 
+						balance = balance - Price.DIME.getValue(); 
+						int count = cashInMachine.get(Price.DIME); 
+						System.out.println("Coin Dispensed " + Price.DIME.getValue() );
+						cashInMachine.put(Price.DIME, count - 1);
 						continue; 
-					}else if(balance >= Price.NICKEL.getValue() && cashInMachine.containsKey(Price.NICKEL)){ 
-						changes.add(Price.NICKEL); 
-						avialableBalance = avialableBalance - Price.NICKEL.getValue(); 
+					}else if(balance/Price.NICKEL.getValue()>0 && cashInMachine.containsKey(Price.NICKEL)){ 
+						balance = balance - Price.NICKEL.getValue();
+						int count = cashInMachine.get(Price.NICKEL); 
+						System.out.println("Coin Dispensed " + Price.NICKEL.getValue() );
+						cashInMachine.put(Price.NICKEL, count - 1);
 						continue; 
 					}else{ 
 					    System.out.println("Not enough change. Please try another product");
@@ -144,7 +143,6 @@ public class VendingMachine {
 		}
 			
 		}
-		return changes;
 	}
 	
 /*
@@ -155,11 +153,7 @@ public class VendingMachine {
 	public void returnCoins() {
 		System.out.println("Press return coins button");
 		balance = this.insertedAmount;
-		List<Price> changesList = collectChange(balance);
-		for(Price p : changesList){
-			int count = cashInMachine.get(p); 
-			cashInMachine.put(p, count - 1);
-		}
+		collectChange(balance);
 		System.out.println("Please take your change " + balance +" cents");
 		System.out.println("Insert Coins for next purchase");
 				
@@ -212,5 +206,5 @@ public class VendingMachine {
 		  int count = cashInMachine.get(p); 
   		  cashInMachine.put(p, count+1);
 	  }
-	   
+	  
 }
